@@ -12,9 +12,14 @@ return {
     ["<leader>bc"] = { "<cmd>BufferLinePickClose<cr>", desc = "Pick to close" },
     ["<leader>bj"] = { "<cmd>BufferLinePick<cr>", desc = "Pick to jump" },
     ["<leader>bt"] = { "<cmd>BufferLineSortByTabs<cr>", desc = "Sort by tabs" },
+    ["<leader>bm"] = { "<cmd>CellularAutomaton make_it_rain<cr>", desc = "Make it rain"},
+    ["<leader>bg"] = { "<cmd>CellularAutomaton game_of_life<cr>", desc = "Game of life"},
+    ["<leader>ss"] = { "<cmd>LiveServer start<cr>", desc = "start http server"},
+    ["<leader>sk"] = { "<cmd>LiveServer start<cr>", desc = "kill http server"},
     -- tables with the `name` key will be registered with which-key if it's installed
     -- this is useful for naming menus
     ["<leader>b"] = { name = "Buffers" },
+    ["<leader>s"] = { name = "Server" },
     -- quick save
     -- ["<C-s>"] = { ":w!<cr>", desc = "Save File" },  -- change description but the same command
   },
