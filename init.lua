@@ -114,13 +114,5 @@ return {
     --TERM RUN--
     vim.cmd [[command! Run lua Funcs.run()]]
 
-    --LITE RUN--
-    vim.cmd [[ca python w <bar> !python %]]
-    vim.cmd [[ca clang w <bar> !clang % -o /data/data/com.termux/files/home/termux/clang/compiles/%:r && /data/data/com.termux/files/home/termux/clang/compiles/%:r]]
-    vim.cmd [[ca cpp w <bar> !clang++ % -o /data/data/com.termux/files/home/termux/cpp/compiles/%:r && /data/data/com.termux/files/home/termux/cpp/compiles/%:r]]
-    vim.cmd [[ca java w <bar> !javac -d /data/data/com.termux/files/home/termux/java/classes % && java -cp /data/data/com.termux/files/home/termux/java/classes %:r]]
-    vim.cmd [[ca lua54 w <bar> !lua %]]
-    vim.cmd [[ca js w <bar> !node %]]
-
   end,
 }
