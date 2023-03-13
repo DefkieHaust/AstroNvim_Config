@@ -1,2 +1,2 @@
 # AstroNvim_Config
-My AstroNvim personal configuration
+My personal AstroNvim configuration
