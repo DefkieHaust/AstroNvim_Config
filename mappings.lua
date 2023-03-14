@@ -15,7 +15,7 @@ return {
     ["<leader>bm"] = { "<cmd>CellularAutomaton make_it_rain<cr>", desc = "Make it rain"},
     ["<leader>bg"] = { "<cmd>CellularAutomaton game_of_life<cr>", desc = "Game of life"},
     ["<leader>ss"] = { "<cmd>LiveServer start<cr>", desc = "start http server"},
-    ["<leader>sk"] = { "<cmd>LiveServer start<cr>", desc = "kill http server"},
+    ["<leader>sk"] = { "<cmd>LiveServer stop<cr>", desc = "kill http server"},
 
     -- TERM RUN --
     ["<leader>rt"] = { "<cmd>Run<cr>", desc = "Terminal run"},
