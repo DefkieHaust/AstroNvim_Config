@@ -14,8 +14,8 @@ return {
     ["<leader>bt"] = { "<cmd>BufferLineSortByTabs<cr>", desc = "Sort by tabs" },
     ["<leader>bm"] = { "<cmd>CellularAutomaton make_it_rain<cr>", desc = "Make it rain"},
     ["<leader>bg"] = { "<cmd>CellularAutomaton game_of_life<cr>", desc = "Game of life"},
-    ["<leader>ss"] = { "<cmd>LiveServer start<cr>", desc = "start http server"},
-    ["<leader>sk"] = { "<cmd>LiveServer stop<cr>", desc = "kill http server"},
+    ["<leader>ss"] = { "<cmd>LiveServerStart<cr>", desc = "start http server"},
+    ["<leader>sk"] = { "<cmd>LiveServerStop<cr>", desc = "kill http server"},
     ["<leader>ba"] = { "<cmd>ASToggle<cr>", desc = "toggle auto-save" },
 
     -- TERM RUN --

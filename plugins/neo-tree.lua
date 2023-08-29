@@ -1,7 +1,44 @@
+local get_icon = require("astronvim.utils").get_icon
+
 return {
   "nvim-neo-tree/neo-tree.nvim",
-  opts = function()
-    local global_commands = {
+  opts = {
+    auto_clean_after_session_restore = true,
+    close_if_last_window = true,
+    source_selector = {
+      winbar = true,
+      content_layout = "center",
+      sources = {
+        { source = "filesystem", display_name = get_icon "FolderClosed" .. " File" },
+        { source = "buffers", display_name = get_icon "DefaultFile" .. " Bufs" },
+        { source = "git_status", display_name = get_icon "Git" .. " Git" },
+        { source = "diagnostics", display_name = get_icon "Diagnostic" .. " Diagnostic" },
+      },
+    },
+    default_component_configs = {
+      indent = { padding = 0, indent_size = 1 },
+      icon = {
+        folder_closed = get_icon "FolderClosed",
+        folder_open = get_icon "FolderOpen",
+        folder_empty = get_icon "FolderEmpty",
+        default = get_icon "DefaultFile",
+      },
+      modified = { symbol = get_icon "FileModified" },
+      git_status = {
+        symbols = {
+          added = get_icon "GitAdd",
+          deleted = get_icon "GitDelete",
+          modified = get_icon "GitChange",
+          renamed = get_icon "GitRenamed",
+          untracked = get_icon "GitUntracked",
+          ignored = get_icon "GitIgnored",
+          unstaged = get_icon "GitUnstaged",
+          staged = get_icon "GitStaged",
+          conflict = get_icon "GitConflict",
+        },
+      },
+    },
+    commands = {
       system_open = function(state) require("astronvim.utils").system_open(state.tree:get_node():get_id()) end,
       parent_or_close = function(state)
         local node = state.tree:get_node()
@@ -23,77 +60,78 @@ return {
           state.commands.open(state)
         end
       end,
-    }
-    local get_icon = require("astronvim.utils").get_icon
-    return {
-      close_if_last_window = true,
-      source_selector = {
-        winbar = true,
-        content_layout = "center",
-        tab_labels = {
-          filesystem = get_icon "FolderClosed" .. " File",
-          buffers = get_icon "DefaultFile" .. " Bufs",
-          git_status = get_icon "Git" .. " Git",
-          diagnostics = get_icon "Diagnostic" .. " Diagnostic",
-        },
+      copy_selector = function(state)
+        local node = state.tree:get_node()
+        local filepath = node:get_id()
+        local filename = node.name
+        local modify = vim.fn.fnamemodify
+
+        local results = {
+          e = { val = modify(filename, ":e"), msg = "Extension only" },
+          f = { val = filename, msg = "Filename" },
+          F = { val = modify(filename, ":r"), msg = "Filename w/o extension" },
+          h = { val = modify(filepath, ":~"), msg = "Path relative to Home" },
+          p = { val = modify(filepath, ":."), msg = "Path relative to CWD" },
+          P = { val = filepath, msg = "Absolute path" },
+        }
+
+        local messages = {
+          { "\nChoose to copy to clipboard:\n", "Normal" },
+        }
+        for i, result in pairs(results) do
+          if result.val and result.val ~= "" then
+            vim.list_extend(messages, {
+              { ("%s."):format(i), "Identifier" },
+              { (" %s: "):format(result.msg) },
+              { result.val, "String" },
+              { "\n" },
+            })
+          end
+        end
+        vim.api.nvim_echo(messages, false, {})
+        local result = results[vim.fn.getcharstr()]
+        if result and result.val and result.val ~= "" then
+          vim.notify("Copied: " .. result.val)
+          vim.fn.setreg("+", result.val)
+        end
+      end,
+    },
+    window = {
+      width = 30,
+      mappings = {
+        ["<space>"] = false, -- disable space until we figure out which-key disabling
+        ["[b"] = "prev_source",
+        ["]b"] = "next_source",
+        o = "open",
+        O = "system_open",
+        h = "parent_or_close",
+        l = "child_or_open",
+        Y = "copy_selector",
       },
-      default_component_configs = {
-        indent = { padding = 0 },
-        icon = {
-          folder_closed = get_icon "FolderClosed",
-          folder_open = get_icon "FolderOpen",
-          folder_empty = get_icon "FolderEmpty",
-          default = get_icon "DefaultFile",
-        },
-        modified = { symbol = get_icon "FileModified" },
-        git_status = {
-          symbols = {
-            added = get_icon "GitAdd",
-            deleted = get_icon "GitDelete",
-            modified = get_icon "GitChange",
-            renamed = get_icon "GitRenamed",
-            untracked = get_icon "GitUntracked",
-            ignored = get_icon "GitIgnored",
-            unstaged = get_icon "GitUnstaged",
-            staged = get_icon "GitStaged",
-            conflict = get_icon "GitConflict",
-          },
-        },
+    },
+    filesystem = {
+      follow_current_file = { enabled = true },
+      hijack_netrw_behavior = "open_current",
+      use_libuv_file_watcher = true,
+      filtered_items = {
+        visible = false, -- when true, they will just be displayed differently than normal items
+        force_visible_in_empty_folder = false, -- when true, hidden files will be shown if the root folder is otherwise empty
+        show_hidden_count = true, -- when true, the number of hidden items in each folder will be shown as the last entry
+        hide_dotfiles = false,
+        hide_gitignored = false,
+        hide_hidden = true, -- only works on Windows for hidden files/directories
+        hide_by_name = {
+          ".DS_Store",
+          "thumbs.db"
+          --"node_modules",
+        }
+      }
+    },
+    event_handlers = {
+      {
+        event = "neo_tree_buffer_enter",
+        handler = function(_) vim.opt_local.signcolumn = "auto" end,
       },
-      window = {
-        width = 30,
-        mappings = {
-          ["<space>"] = false, -- disable space until we figure out which-key disabling
-          ["[b"] = "prev_source",
-          ["]b"] = "next_source",
-          o = "open",
-          O = "system_open",
-          h = "parent_or_close",
-          l = "child_or_open",
-        },
-      },
-      filesystem = {
-        filtered_items = {
-          visible = false,
-          hide_dotfiles = false,
-          hide_gitignored = false,
-          hide_by_name = {
-            ".DS_Store",
-            "thumbs.db",
-            "node_modules",
-            "__pycache__",
-          },
-        },
-        follow_current_file = true,
-        hijack_netrw_behavior = "open_current",
-        use_libuv_file_watcher = true,
-        commands = global_commands,
-      },
-      buffers = { commands = global_commands },
-      git_status = { commands = global_commands },
-      event_handlers = {
-        { event = "neo_tree_buffer_enter", handler = function(_) vim.opt_local.signcolumn = "auto" end },
-      },
-    }
-  end
+    },
+  }
 }

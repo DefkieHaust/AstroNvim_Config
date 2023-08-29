@@ -11,8 +11,8 @@ return {
   -- },
   "nyoom-engineering/oxocarbon.nvim",
   {
-    "manzeloth/live-server",
-    cmd = "LiveServer",
+    "barrett-ruth/live-server.nvim",
+    config = true,
   },
   {
     "eandrju/cellular-automaton.nvim",
